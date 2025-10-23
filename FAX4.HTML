@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Máquina de Fax Antigua — Interactivo</title>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0d0e;
+  --accent:#d9dfe6;
+  --paper:#e2d7b7;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  font-family:"Courier New", monospace;
+  color:var(--accent);
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  min-height:100vh;
+  padding:18px;
+}
+.fax-container{
+  width:100%;
+  max-width:520px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.display{
+  width:100%;
+  background:#222629;
+  border-radius:12px;
+  padding:16px;
+  box-shadow:0 6px 14px rgba(0,0,0,.6);
+}
+.lcd{
+  background:#06181b;
+  border-radius:6px;
+  padding:12px;
+  color:#9fe7c6;
+  font-size:15px;
+  text-align:center;
+  margin-bottom:12px;
+  letter-spacing:0.5px;
+  animation: flicker 3s infinite ease-in-out;
+}
+@keyframes flicker { 0%,100%{opacity:1} 50%{opacity:.9} }
+
+.buttons{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:center;
+}
+.btn{
+  flex:1 1 30%;
+  min-width:120px;
+  padding:12px 8px;
+  border-radius:10px;
+  background:#3d4247;
+  color:#e6e9eb;
+  font-weight:700;
+  text-align:center;
+  box-shadow:0 4px 0 rgba(0,0,0,.3);
+  user-select:none;
+  font-size:14px;
+  cursor:pointer;
+  transition:background .15s, transform .08s;
+}
+.btn:hover{ background:#50575c; }
+.btn:active{ transform:translateY(3px); box-shadow:none; }
+
+.paper-slot{
+  width:100%;
+  height:24px;
+  background:#101316;
+  margin:18px 0;
+  border-radius:6px;
+  position:relative;
+  box-shadow:inset 0 3px 4px rgba(0,0,0,.7);
+}
+.output-area{
+  width:100%;
+  min-height:420px;
+  position:relative;
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+  overflow:visible;
+  padding-bottom:20px;
+}
+.paper{
+  width:92%;
+  max-width:460px;
+  background: var(--paper);
+  border-radius:6px;
+  position:absolute;
+  bottom:-260px;
+  opacity:0;
+  padding:18px;
+  font-size:15px;
+  line-height:1.45;
+  transform-origin: bottom center;
+  cursor:default;
+  overflow-y:auto;
+  max-height:360px;
+  transition: transform .6s ease, opacity .6s ease;
+  color:#111;
+  box-shadow:0 26px 60px rgba(0,0,0,.55);
+  background-image:
+    radial-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.07) 100%);
+  background-size: 3px 3px, 100% 100%;
+  border:1px solid rgba(0,0,0,0.1);
+  font-family: "Special Elite", "Courier New", monospace;
+}
+.paper.animate{
+  animation: slideUp 4s cubic-bezier(.2,.9,.25,1) forwards;
+}
+@keyframes slideUp{
+  0% { transform: translateY(140px) rotate(-2deg) scale(.97); opacity:0; bottom:-260px; }
+  25% { opacity:0.5; transform: translateY(60px) rotate(-1deg) scale(.98); bottom:-120px; }
+  50% { opacity:1; transform: translateY(0px) rotate(0deg) scale(1.02); bottom:40px; }
+  75% { transform: translateY(0px) rotate(0deg) scale(1); bottom:44px; }
+  100% { transform: translateY(0px) rotate(0deg); bottom:44px; opacity:1; }
+}
+
+.paper h3{ margin:0 0 8px 0; font-size:18px; }
+.paper pre{ white-space:pre-wrap; font-family: "Special Elite", "Courier New", monospace; font-size:15px; color:#111; margin:6px 0 12px 0; }
+.sheet-links{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+.sheet-link{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 10px;
+  border-radius:6px;
+  background:#121212;
+  color:#e6e9eb;
+  text-decoration:none;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:0 3px 0 rgba(0,0,0,.3);
+  font-size:14px;
+}
+.sheet-link:active{ transform:translateY(2px); box-shadow:none; }
+.print-btn{
+  margin-top:12px;
+  padding:10px 14px;
+  background:#0b6b3a;
+  color:#fff;
+  border-radius:6px;
+  display:inline-block;
+  cursor:pointer;
+}
+.question-decoration{
+  background-image: linear-gradient(transparent 0 0);
+  border: 1px dashed rgba(0,0,0,0.06);
+  padding:10px;
+  border-radius:6px;
+  position:relative;
+}
+.question-decoration:before{
+  content:"¿";
+  position:absolute;
+  top:-12px;
+  left:-12px;
+  font-size:40px;
+  color: rgba(0,0,0,0.07);
+}
+@media (max-width:520px){
+  .btn{ flex:1 1 45%; min-width:120px; font-size:13px; padding:10px 6px; }
+  .output-area { min-height:360px; padding-bottom:12px; }
+  .paper{ padding:14px; font-size:14px; max-height:300px; }
+}
+</style>
+</head>
+<body>
+<div class="fax-container">
+  <div class="display">
+    <div class="lcd" id="lcd">
+      FAX READY<br><span style="font-size:12px; opacity:.85;">Tocá un botón o escribí tu texto</span>
+    </div>
+
+    <input id="customText" placeholder="Escribí un texto y tocá 'Imprimir'..." style="width:100%; padding:10px; border-radius:6px; border:none; margin-bottom:10px; background:#2d3034; color:#d9dfe6;"/>
+
+    <div class="buttons">
+      <div class="btn" onclick="showSection('what')">¿Qué es el fax?</div>
+      <div class="btn" onclick="showSection('testimonies')">Testimonios</div>
+      <div class="btn" onclick="showSection('curiosities')">Curiosidades</div>
+      <div class="btn" onclick="showSection('behind')">Detrás del uso diario</div>
+      <div class="btn" onclick="showSection('pop')">El fax en la cultura pop</div>
+      <div class="btn" onclick="printCustom()">Imprimir</div>
+      <div class="btn" onclick="showSection('integrantes')">Integrantes</div>
+    </div>
+  </div>
+
+  <div class="paper-slot"></div>
+  <div class="output-area" id="output"></div>
+</div>
+
+<script>
+const output=document.getElementById('output');
+const lcd=document.getElementById('lcd');
+let currentPaper=null;
+let printing=false;
+
+const contents={
+  what:{title:"¿Qué es el fax?", text:`Durante décadas, el fax fue sinónimo de inmediatez en las oficinas y redacciones. Antes del correo electrónico, era por excelencia la vía para enviar documentos y fotografías a distancia. Su presencia, además, otorgaba cierto prestigio y exclusividad a las instituciones que contaban con uno.
+
+Aunque sus orígenes datan de 1843, con la patente del escocés Alexander Bain para transmitir imágenes eléctricas, su uso masivo se consolidó recién en las décadas de 1980 y 1990. En ese período, el fax se convirtió en una herramienta esencial para el periodismo: permitía recibir partes de prensa, declaraciones oficiales o fotografías en cuestión de minutos.
+
+En Argentina, diarios como Clarín adoptaron el fax para agilizar el flujo de noticias desde las corresponsalías del interior, reduciendo los tiempos de entrega. La Nación también destacó cómo las agencias de noticias lo utilizaban para remitir coberturas urgentes y material gráfico de última hora.
+
+De modo similar, las bibliotecas comenzaron a emplear el fax para enviar archivos importantes, reemplazando el uso tradicional de las cartas. En el presente informe, se analizará el uso de esta tecnología en dos instituciones: la Biblioteca Central de la Universidad Nacional de Mar del Plata y la Biblioteca Depositaria de las Naciones Unidas y Hábitat, observando cómo el fax fue desapareciendo frente al correo electrónico y la comunicación digital, incluyendo aplicaciones de mensajería instantánea como WhatsApp.`},
+
+  testimonies:{title:"Testimonios", text:`El fax en la Universidad Nacional de Mar del Plata: del telex al correo electrónico
+
+Según Carlos, bibliotecario de la UNMDP (comunicación personal, 09 de octubre de 2025): Durante los primeros años de la década de 1990 comenzó a utilizarse el servicio de fax en la institución, reemplazando progresivamente al sistema de telex que se empleaba con anterioridad. El telex consistía en un equipo similar a una máquina de escribir, mediante el cual se podían enviar y recibir textos breves —de pocas líneas— a otros dispositivos similares en el extranjero. La universidad abonaba un servicio mensual para mantener esta comunicación activa, que se centralizaba en la biblioteca. Cuando llegaba un mensaje, el telex se encendía automáticamente, imprimía el texto y luego se cortaba el papel, de modo que la persona destinataria podía retirarlo.
+
+Con la aparición del fax en los primeros años de los noventa, se produjo un cambio significativo en la forma de comunicación institucional. Al principio existía un único equipo de fax, ubicado también en la biblioteca, y era operado por una sola persona. Desde las distintas unidades académicas se acercaban a este punto para enviar o recibir mensajes. Con el tiempo, el uso del fax se popularizó y comenzaron a instalarse equipos en diferentes oficinas, lo que facilitó la comunicación interna y externa.
+
+El funcionamiento era relativamente sencillo, aunque requería conocimientos básicos sobre el manejo del equipo: saber colocar correctamente la hoja, marcar el número de destino, cambiar el rollo de papel térmico y realizar configuraciones mínimas. Si bien no se necesitaba una capacitación formal, la persona encargada debía familiarizarse con el equipo y aprender a resolver situaciones técnicas básicas.
+
+El fax se utilizaba principalmente para comunicaciones académicas y administrativas, como la inscripción a congresos o el envío de documentos a otras instituciones. Dado que la comunicación internacional era limitada y costosa, el fax resultaba una herramienta fundamental en ese contexto.
+
+El papel utilizado era especial —térmico y termo-reactivo—, lo que permitía que el texto apareciera mediante calor. Sin embargo, este tipo de papel era costoso y, con el tiempo, la tinta tendía a degradarse, dificultando la conservación de la información impresa. Además, si no se contaba con rollo de papel disponible, no era posible recibir mensajes.
+
+Con el avance de la tecnología, especialmente con la expansión del correo electrónico y de plataformas como Hotmail y mensajerías en línea, el fax comenzó a caer en desuso. La posibilidad de enviar archivos adjuntos por correo electrónico volvió obsoleta esta herramienta, al igual que ocurrió con otros medios de comunicación tradicionales.
+
+En la actualidad, el fax prácticamente no se utiliza dentro de la institución. La digitalización de documentos, el correo electrónico y aplicaciones de mensajería instantánea han reemplazado por completo este medio. Incluso las líneas telefónicas fijas han perdido protagonismo frente a los nuevos sistemas de comunicación digital
+
+Aun así, su huella tecnológica perdura: el fax marcó el inicio de la cultura de la instantaneidad informativa que hoy gobierna el periodismo contemporáneo.
+
+El fax en la Biblioteca de Naciones Unidas y Hábitat: una conexión que cruzó fronteras
+
+En la Biblioteca Depositaria de las Naciones Unidas y Hábitat, el fax marcó una etapa de transición clave hacia la modernización de las comunicaciones institucionales. Según relató la Lic. Graciela E. Pérez, quien estuvo a cargo de la biblioteca, “al principio la comunicación con Nueva York era por carta”. Este método tradicional implicaba largas demoras, especialmente cuando se trataba de documentos urgentes que requerían respuestas inmediatas.
+
+El fax comenzó a introducirse en la década de 1980, aunque la biblioteca no contó con un equipo propio hasta los años 90, cuando pasó a formar parte del Centro Cultural que reunía a todas las bibliotecas municipales. “Ahí empezamos a usar fax”, recuerda Pérez, destacando el cambio que significó incorporar un medio que permitía transmitir información en cuestión de minutos.
+
+No obstante, el período de uso del fax fue breve. La rápida expansión del correo electrónico institucional —particularmente Gmail— reemplazó casi por completo su función. “Después hubo un periodo muy pequeño donde había comunicación por fax”, explicó Pérez, en alusión al avance tecnológico que desplazó esta herramienta de las prácticas cotidianas.
+
+A esta transición se sumaba una dificultad práctica: el sistema de bibliotecas municipales contaba con un único equipo, ubicado en la dirección de 25 de Mayo y Catamarca. Su uso debía compartirse entre varias bibliotecas, lo que limitaba la disponibilidad y reducía la inmediatez que el fax prometía.
+
+Pese a su corta vida útil dentro de la institución, el fax dejó una huella significativa: representó el puente entre la lentitud de la correspondencia postal y la inmediatez del correo electrónico, marcando un punto de inflexión en la historia de la comunicación documental dentro de las bibliotecas públicas.`, links:[{label:'Video UNMDP', type:'url', url:'https://youtu.be/sVgfnD-JllM?si=VyHPVD1bP9ac9K_k'}]},
+
+  curiosities:{title:"Curiosidades", text:`Una curiosidad poco conocida es que, cuando los primeros equipos llegaron a la Argentina, no se vendían de manera directa al público como hoy ocurre con cualquier aparato tecnológico. Eran tan costosos y exclusivos que muchas empresas proveedoras “cedían” los fax en comodato (algo así como un préstamo permanente) para que las instituciones empezaran a adoptarlos. La verdadera ganancia no estaba en el aparato, sino en los insumos: el papel térmico y el servicio telefónico asociado.
+
+A esto se sumaba otro detalle muy particular: un fax no servía de nada si había uno solo. Para que pudiera cumplir su función, otra oficina, biblioteca, empresa o institución también tenía que tener equipo compatible. Por eso las empresas estaban interesadas en distribuirlos aunque fuera casi sin costo: cuanto más fax circulaban, más se consumía papel y llamadas.
+
+En algunas ocasiones incluso se entregaban gratuitamente o a precios simbólicos, sobre todo a organismos públicos y grandes redacciones periodísticas, justamente para garantizar que la red creciera rápidamente. Es un modelo de negocio muy similar al de las impresoras actuales: el aparato puede ser barato o venir “de regalo”, pero el verdadero negocio está en los consumibles.`, decoration:true},
+
+  behind:{title:"Detrás del uso diario", text:`El fax fantasma
+Era muy común que, cuando se acababa el rollo de papel térmico, el equipo seguía “recibiendo” mensajes… pero nadie se enteraba. Días después alguien encontraba un mensaje perdido o llamaban para reclamar respuesta y la gente se enteraba que “se había recibido algo” pero nunca se imprimió. Hoy sería el equivalente a que te manden un mail y tu casilla esté vacía porque no hay “papel”.
+
+Cuando atendía el fax… o la persona
+En muchas oficinas, el fax y el teléfono compartían la misma línea. Entonces sonaba el aparato, alguien atendía pensando que era una llamada y del otro lado se escuchaba pi-piiiiii-biiip. Había que cortar corriendo y dejar que “atendiera” el aparato. Imaginate hoy contestar un WhatsApp con ruidos de robot.
+
+Los memes antes de los memes
+Algunos empleados mandaban dibujos o chistes hechos a mano solo “para probar la línea”. Terminaba siendo el primer equivalente analógico al “te mando un sticker para ver si te llega”. Más de una oficina tenía un mini archivo secreto de chistes recibidos por fax.
+
+La espera dramática
+Cuando alguien enviaba varias páginas, salían lentiiiisimo: 1 hoja… 2 hojas… con suspenso… y todos mirando la máquina como si fuera una cocina viendo levantarse un soufflé. A veces se trababa la hoja final y había que empezar de nuevo.
+
+La cadena de la discordia
+También existían las “cadenas” por fax (sí, como los mails de los 2000 pero versión analógica). Mensajes como: “Reenvíe este comunicado a 10 oficinas más para que nadie pierda la información”. Si hoy WhatsApp ya satura, imaginate papel térmico gastándose en cadena.`},
+
+  pop:{title:"El fax en la cultura pop", text:`Hoy vemos al fax  como algo viejo o hasta gracioso, pero su huella cultural quedó.
+Por ejemplo, en The Office Dwight cree que está recibiendo un fax del ‘él del futuro’. No era magia: era el viejo poder del fax funcionando en 2007.`, link:{label:'Video cultura pop', url:'https://youtu.be/1uYGFD4YIBs?si=ie7g_sGjLIffTlTD'}},
+
+  integrantes:{title:"Integrantes", text:`- Acosta Paula
+- Gonzalez Gala
+- Martinez Mayra
+- Wastavino Kiara`}
+};
+
+function lcdFlash(text){ const original=lcd.innerHTML; lcd.innerHTML=text; setTimeout(()=>lcd.innerHTML=original,2200); }
+function removeCurrentPaper(){ if(!currentPaper) return; currentPaper.style.transform='translateY(120px) rotate(12deg)'; currentPaper.style.opacity='0'; setTimeout(()=>{currentPaper.remove(); currentPaper=null;},500);}
+function showSection(key){ if(printing) return; printing=true; lcdFlash('IMPRIMIENDO...'); removeCurrentPaper(); setTimeout(()=>{ createPaperFromContent(contents[key]); printing=false; },650);}
+function printCustom(){ if(printing) return; printing=true; const txt=document.getElementById('customText').value.trim()||'Hoja rápida — (texto vacío)'; lcdFlash('IMPRIMIENDO...'); removeCurrentPaper(); setTimeout(()=>{ createPaperFromContent({title:'Hoja rápida', text:txt}); printing=false; },650);}
+function createPaperFromContent(data){
+  const paper=document.createElement('div'); paper.className='paper'; paper.style.zIndex=200;
+  if(data.decoration){ paper.className+=' question-decoration'; }
+  const title=document.createElement('h3'); title.textContent=data.title; paper.appendChild(title);
+  const pre=document.createElement('pre'); pre.textContent=data.text||''; paper.appendChild(pre);
+
+  if(data.links && data.links.length){
+    const linksWrap=document.createElement('div'); linksWrap.className='sheet-links';
+    data.links.forEach(l=>{
+      const a=document.createElement('a'); a.className='sheet-link'; a.textContent=l.label;
+      if(l.type==='url'){ a.href=l.url; a.target='_blank'; }
+      linksWrap.appendChild(a);
+    });
+    paper.appendChild(linksWrap);
+  }
+
+  if(data.link && data.link.url){ const a=document.createElement('a'); a.className='sheet-link'; a.textContent=data.link.label; a.href=data.link.url; a.target='_blank'; paper.appendChild(a); }
+
+  const printBtn=document.createElement('div'); printBtn.className='print-btn'; printBtn.textContent='Imprimir / Guardar'; printBtn.onclick=()=>{ alert('Simulación: imprimir/guardar.'); }; paper.appendChild(printBtn);
+
+  output.appendChild(paper); requestAnimationFrame(()=> paper.classList.add('animate')); currentPaper=paper;
+  paper.addEventListener('click',(e)=>{ if(e.target.closest('.sheet-link')||e.target.tagName==='A') return; removeCurrentPaper(); });
+}
+</script>
+</body>
+</html>
